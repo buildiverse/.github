@@ -1,11 +1,24 @@
-name: Central Hello CI/CD
+name: org-hello-reusable
 
 on:
-  workflow_call:
+  workflow_call:            # makes this workflow reusable
+    inputs:
+      who:
+        description: "Who to greet"
+        required: false
+        type: string
+        default: "world"
+    # secrets:
+      # add any required secrets here in future; for now none are required
+      # example: DEPLOY_TOKEN:
+      #   required: true
 
 jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Say Hello
-        run: echo "👋 Hello from central CI/CD workflow!"
+      - name: Say hello
+        run: |
+          echo "👋 Hello, ${{ inputs.who }}!"
+          echo "Caller repo: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
