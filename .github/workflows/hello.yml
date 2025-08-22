@@ -1,24 +1,42 @@
 name: org-hello-reusable
 
 on:
-  workflow_call:            # makes this workflow reusable
+  workflow_call:
     inputs:
-      who:
-        description: "Who to greet"
-        required: false
+      greet:
         type: string
-        default: "world"
-    # secrets:
-      # add any required secrets here in future; for now none are required
-      # example: DEPLOY_TOKEN:
-      #   required: true
+        required: false
+        default: "hello"
+      environment:
+        type: string
+        required: false
+        default: "demo"
+    secrets:
+      ORG_TOKEN:
+        required: false
 
 jobs:
-  hello:
+  ci:
+    name: CI (Hello)
     runs-on: ubuntu-latest
     steps:
-      - name: Say hello
+      # Checks out the caller repo's code (not the .github repo)
+      - uses: actions/checkout@v4
+
+      - name: Print greeting
         run: |
-          echo "👋 Hello, ${{ inputs.who }}!"
-          echo "Caller repo: ${{ github.repository }}"
-          echo "Ref: ${{ github.ref }}"
+          echo "${{ inputs.greet }} from reusable workflow"
+          echo "Repo: $GITHUB_REPOSITORY"
+          echo "Ref:  $GITHUB_REF"
+
+  cd:
+    name: CD (Pretend Deploy)
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show deploy target
+        run: |
+          echo "Deploying to env: ${{ inputs.environment }}"
