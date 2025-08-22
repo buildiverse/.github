@@ -20,8 +20,8 @@ jobs:
     name: CI (Hello)
     runs-on: ubuntu-latest
     steps:
-      # Checks out the caller repo's code (not the .github repo)
-      - uses: actions/checkout@v4
+      # Checkout caller repo
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
       - name: Print greeting
         run: |
@@ -35,8 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
       - name: Show deploy target
-        run: |
-          echo "Deploying to env: ${{ inputs.environment }}"
+        run: "echo \"Deploying to env: ${{ inputs.environment }}\""
