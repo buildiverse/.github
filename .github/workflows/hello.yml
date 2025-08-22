@@ -7,5 +7,26 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Say hello
       - name: Say Hello
-        run: echo "Hello World from reusable workflow!"
+        run: echo "👋 Hello from reusable workflow!"
+
+      # Step 2: Show repo and branch info
+      - name: Repo Info
+        run: |
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Branch/Ref: $GITHUB_REF"
+
+      # Step 3: Checkout the repo code (now we actually use files)
+      - name: Checkout caller repo
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      # Step 4: List files
+      - name: List files in repo
+        run: ls -la
+
+      # Step 5: Run a dummy test
+      - name: Run test script
+        run: |
+          echo "Running fake tests..."
+          echo "✅ All tests passed!"
