@@ -1,0 +1,41 @@
+name: Ruff Formatter
+
+on:
+  workflow_call:
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff
+        run: |
+          changed=$(ruff check . --fix --exit-zero | wc -l)
+          echo "changed=$changed" >> $GITHUB_ENV
+
+      - name: Commit Ruff fixes
+        if: env.changed != '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: format python with Ruff" || echo "No changes"
+
+      - name: Comment on PR
+        if: env.changed != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const changed = process.env.changed;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🐍 Ruff formatted **${changed}** files.`
+            });

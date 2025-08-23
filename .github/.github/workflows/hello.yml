@@ -1,0 +1,26 @@
+name: Reusable Hello (Demo CI)
+
+on:
+  workflow_call:   # 👈 makes it reusable
+
+jobs:
+  demo-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Start Linting
+        run: echo "🔎 Running linter checks..."
+
+      - name: Start Formatting
+        run: echo "✨ Running code formatter..."
+
+      - name: Running Tests
+        run: echo "🧪 Running test suite..."
+
+      - name: Build Step
+        run: echo "🏗️ Building the project..."
+
+      - name: Deployment Step
+        run: echo "🚀 Deploying to staging..."

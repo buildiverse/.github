@@ -1,0 +1,41 @@
+name: Prettier Formatter
+
+on:
+  workflow_call:
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Prettier
+        run: npm install --global prettier
+
+      - name: Run Prettier
+        run: |
+          changed=$(prettier --write . | wc -l)
+          echo "changed=$changed" >> $GITHUB_ENV
+
+      - name: Commit Prettier fixes
+        if: env.changed != '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: format code with Prettier" || echo "No changes"
+
+      - name: Comment on PR
+        if: env.changed != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const changed = process.env.changed;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✨ Prettier formatted **${changed}** files.`
+            });
